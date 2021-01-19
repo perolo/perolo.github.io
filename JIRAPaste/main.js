@@ -16,17 +16,26 @@ miro.onReady(() => {
                     // Delete selected stickers
                     await miro.board.widgets.deleteById(stickers.map((sticker) => sticker.id))
 
-                    // Create shapes from selected stickers
-                    await miro.board.widgets.create(
-                        stickers.map((sticker) => ({
-                            type: 'shape',
-                            text: sticker.text,
-                            x: sticker.x,
-                            y: sticker.y,
-                            width: sticker.bounds.width,
-                            height: sticker.bounds.height,
-                        })),
-                    )
+                    navigator.clipboard.readText()
+                        .then(text => {
+                            // `text` contains the text read from the clipboard
+                            // Create shapes from selected stickers
+                            await miro.board.widgets.create(
+                                stickers.map((sticker) => ({
+                                    type: 'shape',
+                                    text: text,
+                                    x: sticker.x,
+                                    y: sticker.y,
+                                    width: sticker.bounds.width,
+                                    height: sticker.bounds.height,
+                                })),
+                            )
+
+                        })
+                        .catch(err => {
+                            // maybe user didn't grant access to read from clipboard
+                            console.log('Something went wrong', err);
+                        });
 
                     // Show success message
                     miro.showNotification('Stickers has been converted')
