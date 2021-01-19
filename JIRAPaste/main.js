@@ -2,9 +2,9 @@ miro.onReady(() => {
     miro.initialize({
         extensionPoints: {
             bottomBar: {
-                title: 'Sticker to shapes',
+                title: 'JIRAPaste',
                 svgIcon:
-                    '<text x="0" y="15" fill="red">JIRA!</text>',
+                    '<text x="0" y="15"  height="20" fill="red">JIRA!</text>',
                 positionPriority: 1,
                 onClick: async () => {
                     // Get selected widgets
@@ -20,14 +20,10 @@ miro.onReady(() => {
                         .then(text => {
                             // `text` contains the text read from the clipboard
                             // Create shapes from selected stickers
-                            await miro.board.widgets.create(
+                            miro.board.widgets.create(
                                 stickers.map((sticker) => ({
                                     type: 'shape',
                                     text: text,
-                                    x: sticker.x,
-                                    y: sticker.y,
-                                    width: sticker.bounds.width,
-                                    height: sticker.bounds.height,
                                 })),
                             )
 
