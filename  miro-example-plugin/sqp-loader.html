@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <link rel="stylesheet" href="src/styles.css" />
+</head>
+
+<body>
+<div class="scrollable-container">
+    <label for="jira-project-id">JIRA Project Id:</label>
+    <input type="text" class="row-input" id="jira-project-id" value="JIRA Project ID">
+    <label for="jira-user-name">JIRA User Name:</label>
+    <input type="text" class="row-input" id="jira-user-name" value="JIRA User Name">
+    <label for="jira-user-password">JIRA User Password:</label>
+    <input type="password" class="row-input" id="jira-user-password" value="JIRA User Password">
+    <label for="jira-should-use-session">Use Jira session (instead of user/password): </label>
+    <input type="checkbox" class="row-input" id="jira-should-use-session" value="Use JIRA session">
+    <button id="get-sqp-button" class="build-button">GET SQP</button>
+</div>
+<script src="https://miro.com/app/static/sdk.1.1.js"></script>
+<script src="src/sqp-sync.js"></script>
+<script>
+    document.getElementById('get-sqp-button').addEventListener('click', () => getSQPFromJiraByFetchAPI(
+        document.getElementById('jira-project-id').value,
+        document.getElementById('jira-user-name').value,
+        document.getElementById('jira-user-password').value,
+        document.getElementById('jira-should-use-session').value
+    ));
+</script>
+</body>
+</html>
