@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <link rel="stylesheet" href="src/styles.css" />
+</head>
+
+<body>
+<div class="scrollable-container">
+    <label for="jira-project-id">JIRA Project Id:</label>
+    <input type="text" class="row-input" id="jira-project-id" value="JIRA Project ID">
+    <button id="get-file-button" class="build-button">GET File</button>
+
+    <label for="file-input" class="input-label">
+        Click Me <!-- Replace with whatever text or icon you wish to use -->
+        <input type="file" id="file-input">
+    </label>
+
+</div>
+<script src="https://miro.com/app/static/sdk.1.1.js"></script>
+<script src="src/fileopen.js"></script>
+<script>
+    document.getElementById('get-file-button').addEventListener('click', () => openFile(
+        document.getElementById('jira-project-id').value,
+    ));
+</script>
+</body>
+</html>
