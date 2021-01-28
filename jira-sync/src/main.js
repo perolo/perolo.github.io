@@ -30,8 +30,6 @@ function getColor(i) {
 async function syncWithSheet() {
     const appId = await miro.getClientId()
     const viewport = await miro.board.viewport.get()
-//    const maxWidth = 600
-//    const width = 100
     console.log('Button syncWithSheet 2!');
 
     const response = await fetch(SPREADSHEET_URL, {
@@ -45,23 +43,28 @@ async function syncWithSheet() {
 //        json.forEach(async ({x, y1}, i) => {
         for (const key in json) {
             var issue = json[key];
-//            x = issue.x
-//            y1 = issue.y1
-//            rate = parseFloat(y1)
+
+            const tdtags = await miro.board.tags.get({title: 'To Do'})
+            if (length(tdtags)==0) {
+                miro.board.tags.create({title: 'To Do', color: "#0000ff"})
+            }
 
             const shapes = (
                 await miro.board.widgets.get({
                     type: 'card',
                 })
-            ).filter((shape) => !!shape.metadata[appId])
-            const shape = shapes.find((shape) => shape.metadata[appId].key === issue.key)
+            ).filter((shape) => !!shape.metadata[appId]);
+            const shape = shapes.find((shape) => shape.metadata[appId].key === issue.key);
+
+            const todocards = shapes.find((shape) => shape.metadata[appId].color === "#0000ff");
+            miro.board.tags.update({title: 'To Do', widgetIds:todocards })
 
             if (shape) {
-                //const xpos = shape.x - (shape.width - width) / 2
                 console.log("Update " + issue.key);
                 let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`;
                 let color = getColor(issue);
                 resp = await miro.board.widgets.update([{id: shape.id, title: title, style: `{ backgroundColor: ${color} }`}]);
+                resp2 = await miro.board.tags.update
             } else {
                 let key = issue.key
                 let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`
@@ -77,79 +80,17 @@ async function syncWithSheet() {
                     metadata: {
                         [appId]: {
                             key,
+                            color,
                         },
                     },
                 })
                 console.log(resp);
             }
-//        });
         }
     } else {
         alert("HTTP-Error: " + response.status);
     }
-
-
 }
 
-/*
-  const maxWidth = Math.max(...items.map((item) => item.rate)) * 2
 
-  items.forEach(async ({role, rate}, i) => {
-    rate = parseFloat(rate)
-
-    const shapes = (
-      await miro.board.widgets.get({
-        type: 'shape',
-      })
-    ).filter((shape) => !!shape.metadata[appId])
-    const shape = shapes.find((shape) => shape.metadata[appId].role === role)
-    const width = rate * 2
-
-    if (shape) {
-      const x = shape.x - (shape.width - width) / 2
-      miro.board.widgets.update([{id: shape.id, text: `${rate}%`, width, x}])
-    } else {
-      const x = viewport.x + viewport.width / 2 - (maxWidth - width) / 2
-      const y = viewport.y + ROW_HEIGHT / 2 + (ROW_HEIGHT + ROW_MARGIN) * i
-      miro.board.widgets.create({
-        type: 'shape',
-        text: `${rate}%`,
-        width,
-        height: ROW_HEIGHT,
-        x,
-        y,
-        style: {
-          borderWidth: 0,
-          backgroundColor: '#4262ff',
-          fontSize: 8,
-          textAlign: 'c',
-          textAlignVertical: 'm',
-          textColor: '#ffffff',
-        },
-        metadata: {
-          [appId]: {
-            role,
-          },
-        },
-      })
-      miro.board.widgets.create({
-        type: 'text',
-        x: viewport.x + viewport.width / 2 - maxWidth - 110,
-        y,
-        width: 400,
-        style: {
-          textAlign: 'r',
-          fontSize: 12,
-        },
-        text: role,
-        metadata: {
-          [appId]: {
-            role,
-          },
-        },
-      })
-    }
-  })
-}
- */
 
