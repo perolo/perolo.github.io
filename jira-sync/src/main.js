@@ -32,6 +32,11 @@ async function syncWithSheet() {
     const viewport = await miro.board.viewport.get()
     console.log('Button syncWithSheet 2!');
 
+    const tdtags = await miro.board.tags.get({title: 'To Do'})
+    if (tdtags.lenght==0) {
+        miro.board.tags.create({title: 'To Do', color: "#0000ff"})
+    }
+
     const response = await fetch(SPREADSHEET_URL, {
         method: 'GET',
     });
@@ -43,11 +48,6 @@ async function syncWithSheet() {
 //        json.forEach(async ({x, y1}, i) => {
         for (const key in json) {
             var issue = json[key];
-
-            const tdtags = await miro.board.tags.get({title: 'To Do'})
-            if (length(tdtags)==0) {
-                miro.board.tags.create({title: 'To Do', color: "#0000ff"})
-            }
 
             const shapes = (
                 await miro.board.widgets.get({
@@ -63,7 +63,7 @@ async function syncWithSheet() {
                 console.log("Update " + issue.key);
                 let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`;
                 let color = getColor(issue);
-                resp = await miro.board.widgets.update([{id: shape.id, title: title, style: `{ backgroundColor: ${color} }`}]);
+                resp = await miro.board.widgets.update([{id: shape.id, title: title, style: `{ backgroundColor: ${color} }`}]); //fail to set background color
                 resp2 = await miro.board.tags.update
             } else {
                 let key = issue.key
@@ -76,7 +76,7 @@ async function syncWithSheet() {
                     type: 'card',
 //                    title: `${issue.key} ${issue.summary}`,
                     title: title,
-                    style: `{ backgroundColor: ${color} }`,
+                    style: `{ backgroundColor: ${color} }`,  //fail to set background color
                     metadata: {
                         [appId]: {
                             key,
