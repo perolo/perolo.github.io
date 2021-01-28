@@ -61,17 +61,19 @@ async function syncWithSheet() {
                 console.log("Update " + issue.key);
                 let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`;
                 let color = getColor(issue);
-                resp = await miro.board.widgets.update([{id: shape.id, title: title, color: color}]);
+                resp = await miro.board.widgets.update([{id: shape.id, title: title, style: `{ backgroundColor: ${color} }`}]);
             } else {
                 let key = issue.key
                 let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`
                 let color = getColor(issue);
+                // description
+                // style: { backgroundColor: BackgroundColorStyle }
                 console.log("Create " + key);
                 const resp = await miro.board.widgets.create({
                     type: 'card',
 //                    title: `${issue.key} ${issue.summary}`,
                     title: title,
-                    color: color,
+                    style: `{ backgroundColor: ${color} }`,
                     metadata: {
                         [appId]: {
                             key,
