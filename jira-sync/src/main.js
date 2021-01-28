@@ -30,7 +30,10 @@ async function syncWithSheet() {
         // get the response body (the method explained below)
         let json = await response.json();
         console.log(json);
-        json.forEach(async ({x, y1}, i) => {
+//        json.forEach(async ({x, y1}, i) => {
+        for (const issue in json) {
+            x = issue.x
+            y1 = issue.y1
             rate = parseFloat(y1)
 
             const shapes = (
@@ -42,7 +45,8 @@ async function syncWithSheet() {
 
             if (shape) {
                 const xpos = shape.x - (shape.width - width) / 2
-                miro.board.widgets.update([{id: shape.id, text: `${x}`, width, xpos}])
+                console.log("Update " + x);
+                resp = await miro.board.widgets.update([{id: shape.id, text: `${x}`, width, xpos}])
             } else {
                 const xpos = viewport.x + viewport.width / 2 - (maxWidth - width) / 2
                 const ypos = viewport.y + ROW_HEIGHT / 2 + (ROW_HEIGHT + ROW_MARGIN) * i
@@ -69,27 +73,9 @@ async function syncWithSheet() {
                     },
                 })
                 console.log(resp);
-
-                /*        miro.board.widgets.create({
-                          type: 'text',
-                          x: viewport.x + viewport.width / 2 - maxWidth - 110,
-                          ypos,
-                          width: 400,
-                          style: {
-                            textAlign: 'r',
-                            fontSize: 12,
-                          },
-                          text: x,
-                          metadata: {
-                            [appId]: {
-                              x,
-                            },
-                          },
-                        })
-                      }
-                    })*/
             }
-        });
+//        });
+        }
     } else {
         alert("HTTP-Error: " + response.status);
     }
