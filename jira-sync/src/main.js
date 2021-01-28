@@ -31,7 +31,8 @@ async function syncWithSheet() {
         let json = await response.json();
         console.log(json);
 //        json.forEach(async ({x, y1}, i) => {
-        for (const issue in json) {
+        for (const key in json) {
+            var issue = json[key];
             x = issue.x
             y1 = issue.y1
             rate = parseFloat(y1)
