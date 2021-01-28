@@ -90,7 +90,7 @@ async function syncWithSheet() {
                 type: 'card',
             })
         ).filter((card) => !!card.metadata[appId]);
-        let tdtags = await miro.board.tags.get({title: 'To Do'});
+        let tdtags = await miro.board.tags.get({title: 'Done'});
 
 //        remove  = await miro.board.tags.delete({title: 'To Do'}, tdtags.map(a => a.id));
         if (tdtags.length!== 0) {
@@ -98,10 +98,12 @@ async function syncWithSheet() {
                 remove = await miro.board.tags.delete(tdtags[0].id, tdtags[0].widgetIds);
             }
         }
-        tdtags = await miro.board.tags.get({title: 'To Do'});
-        const todocards = cards.find((card) => card.metadata[appId].statuscategory === 'To Do');
-        thetag = await miro.board.tags.create({title: 'To Do', color: "#0000ff", todocards});
-        tdtags = await miro.board.tags.get({title: 'To Do'});
+        tdtags = await miro.board.tags.get({title: 'Done'});
+        const todocards = cards.find((card) => card.metadata[appId].statuscategory === 'Done');
+        ids = todocards.map(a => a.id)
+        thetag = await miro.board.tags.create({title: 'Done', color: "#008000", ids});
+        tdtags = await miro.board.tags.get({title: 'Done'});
+        console.log(tdtags)
 
     } else {
         alert("HTTP-Error: " + response.status);
