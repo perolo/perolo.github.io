@@ -33,9 +33,10 @@ async function syncWithSheet() {
     console.log('Button syncWithSheet 2!');
 
     const tdtags = await miro.board.tags.get({title: 'To Do'})
-    if (tdtags.lenght==0) {
-        miro.board.tags.create({title: 'To Do', color: "#0000ff"})
-    }
+//    if (tdtags.lenght==0) {
+        thetag = await miro.board.tags.create({title: 'To Do', color: "#0000ff"})
+//    }
+    const tdtags2 = await miro.board.tags.get({title: 'To Do'})
 
     const response = await fetch(SPREADSHEET_URL, {
         method: 'GET',
@@ -63,7 +64,11 @@ async function syncWithSheet() {
                 console.log("Update " + issue.key);
                 let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`;
                 let color = getColor(issue);
-                resp = await miro.board.widgets.update([{id: shape.id, title: title, style: `{ backgroundColor: ${color} }`}]); //fail to set background color
+                resp = await miro.board.widgets.update([{id: shape.id, title: title, style: `{ backgroundColor: ${color} }`, metadata: {
+                    [appId]: {
+                            color,
+                    },
+                },}]); //fail to set background color
                 resp2 = await miro.board.tags.update
             } else {
                 let key = issue.key
@@ -84,6 +89,9 @@ async function syncWithSheet() {
                         },
                     },
                 })
+                if (issue.statuscategory === 'To Do') {
+                    thetag = await miro.board.tags.create({title: 'To Do', color: "#0000ff", resp})
+                }
                 console.log(resp);
             }
         }
