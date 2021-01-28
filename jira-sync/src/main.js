@@ -100,7 +100,7 @@ async function syncWithSheet() {
         }
         tdtags = await miro.board.tags.get({title: 'Done'});
         const todocards = cards.find((card) => card.metadata[appId].statuscategory === 'Done');
-        ids = todocards.map(a => a.id)
+        ids = todocards.id
         thetag = await miro.board.tags.create({title: 'Done', color: "#008000", ids});
         tdtags = await miro.board.tags.get({title: 'Done'});
         console.log(tdtags)
