@@ -15,16 +15,16 @@ miro.onReady(function () {
     })
 })
 
-function getColor(issue) {
-    let color = '#F24726'
-    if (issue.statuscategory === "Done") {
-        color = "#008000"
-    } else if (issue.statuscategory === "In Progress") {
-        color = "#FFFF00"
-    } else if (issue.statuscategory === "To Do") {
-        color = "#0000ff"
+function getColor(i) {
+    let c = '#F24726'
+    if (i.statuscategory === "Done") {
+        c = "#008000"
+    } else if (i.statuscategory === "In Progress") {
+        c = "#FFFF00"
+    } else if (i.statuscategory === "To Do") {
+        c = "#0000ff"
     }
-    return color;
+    return c;
 }
 
 async function syncWithSheet() {
@@ -60,24 +60,8 @@ async function syncWithSheet() {
                 //const xpos = shape.x - (shape.width - width) / 2
                 console.log("Update " + issue.key);
                 let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`;
-                if (shape.metadata[appId].title !== title) {
-                    console.log("Update " + issue.key + "title");
-                    resp = await miro.board.widgets.update([{id: shape.id, title: title, metadata: {
-                            [appId]: {
-                                title,
-                            },
-                        },}]);
-                }
                 let color = getColor(issue);
-                if (shape.metadata[appId].color !== color) {
-                    console.log("Update " + issue.key + "color");
-                    resp = await miro.board.widgets.update([{id: shape.id, color: color, metadata: {
-                            [appId]: {
-                                color,
-                            },
-                        },}]);
-
-                }
+                resp = await miro.board.widgets.update([{id: shape.id, title: title, color: color}]);
             } else {
                 let key = issue.key
                 let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`
@@ -91,8 +75,6 @@ async function syncWithSheet() {
                     metadata: {
                         [appId]: {
                             key,
-                            title,
-                            color,
                         },
                     },
                 })
