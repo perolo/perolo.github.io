@@ -15,6 +15,18 @@ miro.onReady(function () {
     })
 })
 
+function getColor(issue) {
+    let color = '#F24726'
+    if (issue.statuscategory === "Done") {
+        color = "#008000"
+    } else if (issue.statuscategory === "In Progress") {
+        color = "#FFFF00"
+    } else if (issue.statuscategory === "To Do") {
+        color = "#0000ff"
+    }
+    return color;
+}
+
 async function syncWithSheet() {
     const appId = await miro.getClientId()
     const viewport = await miro.board.viewport.get()
@@ -47,18 +59,40 @@ async function syncWithSheet() {
             if (shape) {
                 //const xpos = shape.x - (shape.width - width) / 2
                 console.log("Update " + issue.key);
-                resp = await miro.board.widgets.update([{id: shape.id, title: `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`}])
+                let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`;
+                if (shape.metadata[appId].title !== title) {
+                    console.log("Update " + issue.key + "title");
+                    resp = await miro.board.widgets.update([{id: shape.id, title: title, metadata: {
+                            [appId]: {
+                                title,
+                            },
+                        },}]);
+                }
+                let color = getColor(issue);
+                if (shape.metadata[appId].color !== color) {
+                    console.log("Update " + issue.key + "color");
+                    resp = await miro.board.widgets.update([{id: shape.id, color: color, metadata: {
+                            [appId]: {
+                                color,
+                            },
+                        },}]);
+
+                }
             } else {
-                let index = issue.key
-                console.log("Create " + index);
+                let key = issue.key
+                let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`
+                let color = getColor(issue);
+                console.log("Create " + key);
                 const resp = await miro.board.widgets.create({
                     type: 'card',
 //                    title: `${issue.key} ${issue.summary}`,
-                    title: `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`,
-                    color: '#F24726',
+                    title: title,
+                    color: color,
                     metadata: {
                         [appId]: {
                             key,
+                            title,
+                            color,
                         },
                     },
                 })
