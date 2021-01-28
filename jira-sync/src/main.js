@@ -18,8 +18,8 @@ miro.onReady(function () {
 async function syncWithSheet() {
     const appId = await miro.getClientId()
     const viewport = await miro.board.viewport.get()
-    const maxWidth = 600
-    const width = 100
+//    const maxWidth = 600
+//    const width = 100
     console.log('Button syncWithSheet 2!');
 
     const response = await fetch(SPREADSHEET_URL, {
@@ -33,43 +33,31 @@ async function syncWithSheet() {
 //        json.forEach(async ({x, y1}, i) => {
         for (const key in json) {
             var issue = json[key];
-            x = issue.x
-            y1 = issue.y1
-            rate = parseFloat(y1)
+//            x = issue.x
+//            y1 = issue.y1
+//            rate = parseFloat(y1)
 
             const shapes = (
                 await miro.board.widgets.get({
-                    type: 'shape',
+                    type: 'card',
                 })
             ).filter((shape) => !!shape.metadata[appId])
-            const shape = shapes.find((shape) => shape.metadata[appId].x === x)
+            const shape = shapes.find((shape) => shape.metadata[appId].key === issue.key)
 
             if (shape) {
-                const xpos = shape.x - (shape.width - width) / 2
-                console.log("Update " + x);
-                resp = await miro.board.widgets.update([{id: shape.id, text: `${x}`, width, xpos}])
+                //const xpos = shape.x - (shape.width - width) / 2
+                console.log("Update " + issue.key);
+                resp = await miro.board.widgets.update([{id: shape.id, title: `${issue.key}+" " ${issue.summary}`}])
             } else {
-                const xpos = viewport.x + viewport.width / 2 - (maxWidth - width) / 2
-                const ypos = viewport.y + ROW_HEIGHT / 2 + (ROW_HEIGHT + ROW_MARGIN) * i
-                console.log("Create " + x);
+                let index = issue.key
+                console.log("Create " + index);
                 const resp = await miro.board.widgets.create({
-                    type: 'shape',
-                    text: `${x}`,
-                    width,
-                    height: ROW_HEIGHT,
-                    xpos,
-                    ypos,
-                    style: {
-                        borderWidth: 0,
-                        backgroundColor: '#4262ff',
-                        fontSize: 8,
-                        textAlign: 'c',
-                        textAlignVertical: 'm',
-                        textColor: '#ffffff',
-                    },
+                    type: 'card',
+                    title: `${issue.key}+" " ${issue.summary}`,
+                    color: '#F24726',
                     metadata: {
                         [appId]: {
-                            x,
+                            index,
                         },
                     },
                 })
