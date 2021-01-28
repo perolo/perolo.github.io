@@ -47,17 +47,18 @@ async function syncWithSheet() {
             if (shape) {
                 //const xpos = shape.x - (shape.width - width) / 2
                 console.log("Update " + issue.key);
-                resp = await miro.board.widgets.update([{id: shape.id, title: `${issue.key}+" " ${issue.summary}`}])
+                resp = await miro.board.widgets.update([{id: shape.id, title: `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`}])
             } else {
                 let index = issue.key
                 console.log("Create " + index);
                 const resp = await miro.board.widgets.create({
                     type: 'card',
-                    title: `${issue.key}+" " ${issue.summary}`,
+//                    title: `${issue.key} ${issue.summary}`,
+                    title: `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`,
                     color: '#F24726',
                     metadata: {
                         [appId]: {
-                            index,
+                            key,
                         },
                     },
                 })
