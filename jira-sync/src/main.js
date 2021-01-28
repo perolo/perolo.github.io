@@ -1,5 +1,3 @@
-const ROW_HEIGHT = 30
-const ROW_MARGIN = 10
 const SPREADSHEET_URL = 'https://perolo.github.io/jira-sync/data.json'
 
 miro.onReady(function () {
@@ -29,14 +27,8 @@ function getColor(i) {
 
 async function syncWithSheet() {
     const appId = await miro.getClientId()
-    const viewport = await miro.board.viewport.get()
+//    const viewport = await miro.board.viewport.get()
     console.log('Button syncWithSheet 2!');
-
-    const tdtags = await miro.board.tags.get({title: 'To Do'})
-//    if (tdtags.lenght==0) {
-        thetag = await miro.board.tags.create({title: 'To Do', color: "#0000ff"})
-//    }
-    const tdtags2 = await miro.board.tags.get({title: 'To Do'})
 
     const response = await fetch(SPREADSHEET_URL, {
         method: 'GET',
@@ -56,17 +48,14 @@ async function syncWithSheet() {
                 })
             ).filter((shape) => !!shape.metadata[appId]);
             const shape = shapes.find((shape) => shape.metadata[appId].key === issue.key);
-
-            const todocards = shapes.find((shape) => shape.metadata[appId].color === "#0000ff");
-            miro.board.tags.update({title: 'To Do', widgetIds:todocards })
-
             if (shape) {
                 console.log("Update " + issue.key);
                 let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`;
                 let color = getColor(issue);
+                let statuscategory = issue.statuscategory
                 resp = await miro.board.widgets.update([{id: shape.id, title: title, style: `{ backgroundColor: ${color} }`, metadata: {
                     [appId]: {
-                            color,
+                        statuscategory,
                     },
                 },}]); //fail to set background color
                 resp2 = await miro.board.tags.update
@@ -74,6 +63,7 @@ async function syncWithSheet() {
                 let key = issue.key
                 let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`
                 let color = getColor(issue);
+                let statuscategory = issue.statuscategory
                 // description
                 // style: { backgroundColor: BackgroundColorStyle }
                 console.log("Create " + key);
@@ -85,16 +75,28 @@ async function syncWithSheet() {
                     metadata: {
                         [appId]: {
                             key,
-                            color,
+                            statuscategory,
                         },
                     },
                 })
                 if (issue.statuscategory === 'To Do') {
-                    thetag = await miro.board.tags.create({title: 'To Do', color: "#0000ff", resp})
+
                 }
                 console.log(resp);
             }
         }
+        const cards = (
+            await miro.board.widgets.get({
+                type: 'card',
+            })
+        ).filter((card) => !!card.metadata[appId]);
+        let tdtags = await miro.board.tags.get({title: 'To Do'});
+        remove  = await miro.board.tags.delete({title: 'To Do'});
+        tdtags = await miro.board.tags.get({title: 'To Do'});
+        const todocards = cards.find((card) => card.metadata[appId].statuscategory === 'To Do');
+        thetag = await miro.board.tags.create({title: 'To Do', color: "#0000ff", todocards});
+        tdtags = await miro.board.tags.get({title: 'To Do'});
+
     } else {
         alert("HTTP-Error: " + response.status);
     }
