@@ -18,6 +18,8 @@ miro.onReady(function () {
 async function syncWithSheet() {
     const appId = await miro.getClientId()
     const viewport = await miro.board.viewport.get()
+    const maxWidth = 600
+    const width = 100
     console.log('Button syncWithSheet 2!');
 
     const response = await fetch(SPREADSHEET_URL, {
@@ -44,7 +46,8 @@ async function syncWithSheet() {
             } else {
                 const xpos = viewport.x + viewport.width / 2 - (maxWidth - width) / 2
                 const ypos = viewport.y + ROW_HEIGHT / 2 + (ROW_HEIGHT + ROW_MARGIN) * i
-                miro.board.widgets.create({
+                console.log("Create " + x);
+                const resp = await miro.board.widgets.create({
                     type: 'shape',
                     text: `${x}`,
                     width,
@@ -65,6 +68,7 @@ async function syncWithSheet() {
                         },
                     },
                 })
+                console.log(resp);
 
                 /*        miro.board.widgets.create({
                           type: 'text',
