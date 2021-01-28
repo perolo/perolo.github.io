@@ -1,8 +1,8 @@
 
 const ROW_HEIGHT = 30
 const ROW_MARGIN = 10
-const SPREADSHEET_URL =
-  'https://docs.google.com/spreadsheets/d/121-56BwZe8Cws0A8xE_cSGXc64YD_bBPfQM8o2YVnaM/edit?usp=sharing'
+const SPREADSHEET_URL = 'https://perolo.github.io/jira-sync/data.json'
+//  'https://docs.google.com/spreadsheets/d/121-56BwZe8Cws0A8xE_cSGXc64YD_bBPfQM8o2YVnaM/edit?usp=sharing'
 
 miro.onReady(function () {
   miro.initialize({
@@ -19,12 +19,21 @@ miro.onReady(function () {
 
 async function syncWithSheet() {
   const appId = await miro.getClientId()
-/*  const items = await Tabletop.init({
-    key: SPREADSHEET_URL,
-    simpleSheet: true,
-  })*/
+  /*  const items = await Tabletop.init({
+      key: SPREADSHEET_URL,
+      simpleSheet: true,
+    })*/
   const viewport = await miro.board.viewport.get()
   console.log('Button syncWithSheet 2!');
+
+  const response = await fetch(SPREADSHEET_URL, {
+    method: 'GET',
+  });
+  console.log(response.status);
+
+  console.log(response.json());
+
+}
   /*
     const maxWidth = Math.max(...items.map((item) => item.rate)) * 2
 
@@ -84,6 +93,6 @@ async function syncWithSheet() {
         })
       }
     })
-
-   */
 }
+   */
+
