@@ -40,6 +40,8 @@ async function syncWithSheet() {
     } else {
 
         url = selectedshape[0].plainText
+        initialx = selectedshape[0].x
+        initialy = selectedshape[0].y
 
         const response = await fetch(url, {
             method: 'GET',
@@ -65,7 +67,12 @@ async function syncWithSheet() {
                     let color = getColor(issue);
                     let statuscategory = issue.statuscategory
                     resp = await miro.board.widgets.update([{
-                        id: shape.id, title: title, style: `{ backgroundColor: ${color} }`, metadata: {
+                        id: shape.id,
+                        title: title,
+                        style: {
+                            backgroundColor: '${color}',
+                        },
+                        metadata: {
                             [appId]: {
                                 key,
                                 statuscategory,
@@ -78,6 +85,8 @@ async function syncWithSheet() {
                     let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`
                     let color = getColor(issue);
                     let statuscategory = issue.statuscategory
+                    initialx = initialx + 50
+                    initialy = initialy + 50
                     // description
                     // style: { backgroundColor: BackgroundColorStyle }
                     console.log("Create " + key);
@@ -85,7 +94,11 @@ async function syncWithSheet() {
                         type: 'card',
 //                    title: `${issue.key} ${issue.summary}`,
                         title: title,
-                        style: `{ backgroundColor: ${color} }`,  //fail to set background color
+                        x:initialx,
+                        y:initialy,
+                        style: {
+                            backgroundColor: '${color}',
+                        },
                         metadata: {
                             [appId]: {
                                 key,
