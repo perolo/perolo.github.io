@@ -63,6 +63,7 @@ async function syncWithSheet() {
                 const shape = shapes.find((shape) => shape.metadata[appId].key === issue.key);
                 if (shape) {
                     console.log("Update " + issue.key);
+                    let key = issue.key
                     let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`;
                     let color = getColor(issue);
                     let statuscategory = issue.statuscategory
@@ -70,7 +71,7 @@ async function syncWithSheet() {
                         id: shape.id,
                         title: title,
                         style: {
-                            backgroundColor: '${color}',
+                            backgroundColor: color,
                         },
                         metadata: {
                             [appId]: {
@@ -97,7 +98,7 @@ async function syncWithSheet() {
                         x:initialx,
                         y:initialy,
                         style: {
-                            backgroundColor: '${color}',
+                            backgroundColor: color,
                         },
                         metadata: {
                             [appId]: {
