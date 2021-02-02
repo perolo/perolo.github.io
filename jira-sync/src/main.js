@@ -32,9 +32,9 @@ async function syncWithSheet() {
 
     let selectedWidgets = await miro.board.selection.get()
 
-    const selectedshape = (selectedWidgets).filter((shape) => shape.type === 'shape')
+    const selectedshape = (selectedWidgets).filter((shape) => shape.type === 'SHAPE')
 
-    if (length(selectedWidgets) !== 1) {
+    if ((length(selectedshape) !== 1) || (selectedshape == undefined)){
         alert("Select 1 Shape with url defined : " );
 
     } else {
