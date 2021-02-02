@@ -39,7 +39,7 @@ async function syncWithSheet() {
 
     } else {
 
-        url = selectedshape.text
+        url = selectedshape[0].plainText
 
         const response = await fetch(url, {
             method: 'GET',
