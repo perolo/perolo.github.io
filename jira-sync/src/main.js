@@ -34,7 +34,7 @@ async function syncWithSheet() {
 
     const selectedshape = (selectedWidgets).filter((shape) => shape.type === 'SHAPE')
 
-    if ((length(selectedshape) !== 1) || (selectedshape == undefined)){
+    if ((selectedshape.length !== 1) || (selectedshape == undefined)){
         alert("Select 1 Shape with url defined : " );
 
     } else {
