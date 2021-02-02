@@ -30,83 +30,98 @@ async function syncWithSheet() {
 //    const viewport = await miro.board.viewport.get()
     console.log('Button syncWithSheet 2!');
 
-    const response = await fetch(SPREADSHEET_URL, {
-        method: 'GET',
-    });
-    console.log(response.status);
-    if (response.ok) { // if HTTP-status is 200-299
-        // get the response body (the method explained below)
-        let json = await response.json();
-        console.log(json);
-//        json.forEach(async ({x, y1}, i) => {
-        for (const key in json) {
-            var issue = json[key];
+    let selectedWidgets = await miro.board.selection.get()
 
-            const shapes = (
+    const selectedshape = (selectedWidgets).filter((shape) => shape.type === 'shape')
+
+    if (length(selectedWidgets) !== 1) {
+        alert("Select 1 Shape with url defined : " );
+
+    } else {
+
+        url = selectedshape.text
+
+        const response = await fetch(url, {
+            method: 'GET',
+        });
+        console.log(response.status);
+        if (response.ok) { // if HTTP-status is 200-299
+            // get the response body (the method explained below)
+            let json = await response.json();
+            console.log(json);
+//        json.forEach(async ({x, y1}, i) => {
+            for (const key in json) {
+                var issue = json[key];
+
+                const shapes = (
+                    await miro.board.widgets.get({
+                        type: 'card',
+                    })
+                ).filter((shape) => !!shape.metadata[appId]);
+                const shape = shapes.find((shape) => shape.metadata[appId].key === issue.key);
+                if (shape) {
+                    console.log("Update " + issue.key);
+                    let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`;
+                    let color = getColor(issue);
+                    let statuscategory = issue.statuscategory
+                    resp = await miro.board.widgets.update([{
+                        id: shape.id, title: title, style: `{ backgroundColor: ${color} }`, metadata: {
+                            [appId]: {
+                                key,
+                                statuscategory,
+                            },
+                        },
+                    }]); //fail to set background color
+                    resp2 = await miro.board.tags.update
+                } else {
+                    let key = issue.key
+                    let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`
+                    let color = getColor(issue);
+                    let statuscategory = issue.statuscategory
+                    // description
+                    // style: { backgroundColor: BackgroundColorStyle }
+                    console.log("Create " + key);
+                    const resp = await miro.board.widgets.create({
+                        type: 'card',
+//                    title: `${issue.key} ${issue.summary}`,
+                        title: title,
+                        style: `{ backgroundColor: ${color} }`,  //fail to set background color
+                        metadata: {
+                            [appId]: {
+                                key,
+                                statuscategory,
+                            },
+                        },
+                    })
+                    if (issue.statuscategory === 'To Do') {
+
+                    }
+                    console.log(resp);
+                }
+            }
+            const cards = (
                 await miro.board.widgets.get({
                     type: 'card',
                 })
-            ).filter((shape) => !!shape.metadata[appId]);
-            const shape = shapes.find((shape) => shape.metadata[appId].key === issue.key);
-            if (shape) {
-                console.log("Update " + issue.key);
-                let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`;
-                let color = getColor(issue);
-                let statuscategory = issue.statuscategory
-                resp = await miro.board.widgets.update([{id: shape.id, title: title, style: `{ backgroundColor: ${color} }`, metadata: {
-                    [appId]: {
-                        statuscategory,
-                    },
-                },}]); //fail to set background color
-                resp2 = await miro.board.tags.update
-            } else {
-                let key = issue.key
-                let title = `<p><a href=${issue.link}>[${issue.key}] ${issue.summary}</a></p>`
-                let color = getColor(issue);
-                let statuscategory = issue.statuscategory
-                // description
-                // style: { backgroundColor: BackgroundColorStyle }
-                console.log("Create " + key);
-                const resp = await miro.board.widgets.create({
-                    type: 'card',
-//                    title: `${issue.key} ${issue.summary}`,
-                    title: title,
-                    style: `{ backgroundColor: ${color} }`,  //fail to set background color
-                    metadata: {
-                        [appId]: {
-                            key,
-                            statuscategory,
-                        },
-                    },
-                })
-                if (issue.statuscategory === 'To Do') {
-
-                }
-                console.log(resp);
-            }
-        }
-        const cards = (
-            await miro.board.widgets.get({
-                type: 'card',
-            })
-        ).filter((card) => !!card.metadata[appId]);
-        let tdtags = await miro.board.tags.get({title: 'Done'});
+            ).filter((card) => !!card.metadata[appId]);
+            let tdtags = await miro.board.tags.get({title: 'Done'});
 
 //        remove  = await miro.board.tags.delete({title: 'To Do'}, tdtags.map(a => a.id));
-        if (tdtags.length!== 0) {
-            if (tdtags != undefined) {
-                remove = await miro.board.tags.delete(tdtags[0].id, tdtags[0].widgetIds);
+            if (tdtags.length !== 0) {
+                if (tdtags != undefined) {
+                    remove = await miro.board.tags.delete(tdtags[0].id, tdtags[0].widgetIds);
+                }
             }
-        }
-        tdtags = await miro.board.tags.get({title: 'Done'});
-        const todocards = cards.filter((card) => card.metadata[appId].statuscategory === 'Done');
-        ids = todocards.map(a => a.id)
-        thetag = await miro.board.tags.create({title: 'Done', color: "#008000", ids});
-        tdtags = await miro.board.tags.get({title: 'Done'});
-        console.log(tdtags)
+            tdtags = await miro.board.tags.get({title: 'Done'});
+            const todocards = cards.filter((card) => card.metadata[appId].statuscategory === 'Done');
+            ids = todocards.map(a => a.id)
+            thetag = await miro.board.tags.create({title: 'Done', color: "#008000", ids});
+            tdtags = await miro.board.tags.get({title: 'Done'});
+            console.log(tdtags)
 
-    } else {
-        alert("HTTP-Error: " + response.status);
+        } else {
+            alert("HTTP-Error: " + response.status);
+        }
     }
 }
 
