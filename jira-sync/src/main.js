@@ -4,7 +4,7 @@ miro.onReady(function () {
     miro.initialize({
         extensionPoints: {
             bottomBar: {
-                title: 'Import data from spreadsheet',
+                title: 'Sync from JIRA json',
                 svgIcon:
                     '<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-import" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M16 288c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h112v-64zm489-183L407.1 7c-4.5-4.5-10.6-7-17-7H384v128h128v-6.1c0-6.3-2.5-12.4-7-16.9zm-153 31V0H152c-13.3 0-24 10.7-24 24v264h128v-65.2c0-14.3 17.3-21.4 27.4-11.3L379 308c6.6 6.7 6.6 17.4 0 24l-95.7 96.4c-10.1 10.1-27.4 3-27.4-11.3V352H128v136c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H376c-13.2 0-24-10.8-24-24z"></path></svg>',
                 onClick: syncWithSheet,
@@ -45,7 +45,13 @@ async function syncWithSheet() {
 
         const response = await fetch(url, {
             method: 'GET',
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'include', // include, *same-origin, omit
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer' // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         });
+
         console.log(response.status);
         if (response.ok) { // if HTTP-status is 200-299
             // get the response body (the method explained below)
