@@ -72,7 +72,7 @@ async function syncWithSheet() {
 
         const response = await fetch(url, {
             method: 'GET',
-            mode: 'cors', // no-cors, *cors, same-origin
+            mode: 'no-cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             credentials: 'include', // include, *same-origin, omit
             redirect: 'follow', // manual, *follow, error
