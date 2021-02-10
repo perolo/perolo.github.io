@@ -1,4 +1,6 @@
-const SPREADSHEET_URL = 'https://perolo.github.io/jira-sync/data.json'
+//const SPREADSHEET_URL = 'https://perolo.github.io/jira-sync/data.json'
+
+const iconPaste = '<circle cx="12" cy="12" r="9" fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2"></circle>'
 
 miro.onReady(function () {
     miro.initialize({
@@ -11,7 +13,32 @@ miro.onReady(function () {
             },
         },
     })
+    miro.initialize({
+        extensionPoints: {
+            bottomBar: {
+                title: 'Paste',
+                svgIcon: iconPaste,
+                onClick: async (e) => {
+                    pasteData(e);
+                },
+            },
+        },
+    })
 })
+
+//input.addEventListener("paste", event => pasteData(event));
+function pasteData(e) {
+    console.log("pasteData");
+    var pastedText = e.clipboardData.getData('Text');
+    console.log(pastedText);
+    document.getElementById('miro-holder').addEventListener("paste", event => pasteData2(event));
+
+}
+function pasteData2(e) {
+    console.log("pasteData2");
+    var pastedText = e.clipboardData.getData('Text');
+    console.log(pastedText);
+}
 
 function getColor(i) {
     let c = '#F24726'
@@ -146,4 +173,14 @@ async function syncWithSheet() {
 }
 
 
+
+function pasteData(e) {
+
+    var pastedText = e.clipboardData.getData('Text');
+
+    console.log(pastedText);
+
+    return false; // Prevent the default handler from running.
+
+}
 
